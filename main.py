@@ -69,22 +69,22 @@ def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_hea
 def yellow_handle_movement(keys_pressed, yellow):
     if keys_pressed[pygame.K_a] and yellow.x - VEL > 0:  # LEFT
         yellow.x -= VEL
-    if keys_pressed[pygame.K_d] and yellow.x + VEL + yellow.width < BORDER.x:  # RIGHT
+    if keys_pressed[pygame.K_d] and yellow.x + VEL + yellow.height < BORDER.x:  # RIGHT
         yellow.x += VEL
     if keys_pressed[pygame.K_w] and yellow.y - VEL > 0:  # UP
         yellow.y -= VEL
-    if keys_pressed[pygame.K_s] and yellow.y + VEL + yellow.height < HEIGHT - 15:  # DOWN
+    if keys_pressed[pygame.K_s] and yellow.y + VEL + yellow.width < HEIGHT:  # DOWN
         yellow.y += VEL
 
 
 def red_handle_movement(keys_pressed, red):
     if keys_pressed[pygame.K_LEFT] and red.x - VEL > BORDER.x + BORDER.width:  # LEFT
         red.x -= VEL
-    if keys_pressed[pygame.K_RIGHT] and red.x + VEL + red.width < WIDTH:  # RIGHT
+    if keys_pressed[pygame.K_RIGHT] and red.x + VEL + red.height < WIDTH:  # RIGHT
         red.x += VEL
     if keys_pressed[pygame.K_UP] and red.y - VEL > 0:  # UP
         red.y -= VEL
-    if keys_pressed[pygame.K_DOWN] and red.y + VEL + red.height < HEIGHT - 15:  # DOWN
+    if keys_pressed[pygame.K_DOWN] and red.y + VEL + red.width < HEIGHT:  # DOWN
         red.y += VEL
 
 
@@ -136,13 +136,13 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(yellow_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
-                        yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
+                        yellow.x + yellow.height, yellow.y + yellow.width // 2 - 2, 10, 5)
                     yellow_bullets.append(bullet)
                     #BULLET_FIRE_SOUND.play()
 
                 if event.key == pygame.K_RCTRL and len(red_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
-                        red.x, red.y + red.height//2 - 2, 10, 5)
+                        red.x, red.y + red.width // 2 - 2, 10, 5)
                     red_bullets.append(bullet)
                     #BULLET_FIRE_SOUND.play()
 
