@@ -1,5 +1,7 @@
 import pygame
 import os
+import random
+import time
 pygame.font.init()
 pygame.mixer.init()
 
@@ -19,11 +21,13 @@ BORDER = pygame.Rect(WIDTH//2 - 5, 0, 10, HEIGHT)
 
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
+MENU_FONT = pygame.font.SysFont('comicsans', 60)
 
 FPS = 60
 VEL = 5
-BULLET_VEL = 7
+BULLET_VEL = 10
 MAX_BULLETS = 3
+MAX_BULLETS_bot = 10
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 55, 40
 
 YELLOW_HIT = pygame.USEREVENT + 1
@@ -41,6 +45,22 @@ RED_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(
 
 SPACE = pygame.transform.scale(pygame.image.load(
     os.path.join('Assets', 'space.png')), (WIDTH, HEIGHT))
+
+
+def draw_home_screen():
+    WIN.blit(SPACE, (0, 0))
+    
+    # Draw 1-player button
+    pygame.draw.rect(WIN, WHITE, (300, 350, 400, 80))
+    start_text = MENU_FONT.render("Single player", True, BLACK)
+    WIN.blit(start_text, (320, 345))
+
+    # Draw 2-player button
+    pygame.draw.rect(WIN, WHITE, (300, 150, 400, 80))
+    start_text = MENU_FONT.render("2 player", True, BLACK)
+    WIN.blit(start_text, (320, 145))
+
+    pygame.display.update()
 
 
 def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health):
@@ -76,6 +96,18 @@ def yellow_handle_movement(keys_pressed, yellow):
     if keys_pressed[pygame.K_s] and yellow.y + VEL + yellow.height < HEIGHT - 15:  # DOWN
         yellow.y += VEL
 
+
+def bot_yellow_handle_movement(direction, yellow):
+
+    if direction == 'left' and yellow.x - VEL > 0:  # LEFT
+        yellow.x -= VEL
+    if direction == 'right' and yellow.x + VEL + yellow.width < BORDER.x:  # RIGHT
+        yellow.x += VEL
+    if direction == 'up' and yellow.y - VEL > 0:  # UP
+        yellow.y -= VEL
+    if direction == 'down' and yellow.y + VEL + yellow.height < HEIGHT - 15:  # DOWN
+        yellow.y += VEL
+    
 
 def red_handle_movement(keys_pressed, red):
     if keys_pressed[pygame.K_LEFT] and red.x - VEL > BORDER.x + BORDER.width:  # LEFT
@@ -125,7 +157,30 @@ def main():
     yellow_health = 10
 
     clock = pygame.time.Clock()
-    run = True
+
+    run = False
+    game_mode = "1P"
+    while (not run):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                # single player:
+                if 300 <= mouse_x <= 700 and 350 <= mouse_y <= 430:
+                    run = True
+                # 2 player:
+                elif 300 <= mouse_x <= 700 and 150 <= mouse_y <= 230:
+                    game_mode = "2P"
+                    run = True
+
+        draw_home_screen()
+
+    last_time = time.time()
+    last_bot_bullet = time.time()
+    bot_move_time = random.uniform(0.2, 0.5)
+    direction = "none"
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -134,7 +189,7 @@ def main():
                 pygame.quit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LCTRL and len(yellow_bullets) < MAX_BULLETS:
+                if event.key == pygame.K_LCTRL and len(yellow_bullets) < MAX_BULLETS    and game_mode == "2P":
                     bullet = pygame.Rect(
                         yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
                     yellow_bullets.append(bullet)
@@ -153,6 +208,13 @@ def main():
             if event.type == YELLOW_HIT:
                 yellow_health -= 1
                 #BULLET_HIT_SOUND.play()
+        
+        if abs(yellow.y - red.y) <= 50 and len(yellow_bullets) < MAX_BULLETS_bot and time.time() - last_bot_bullet >= 0.3    and game_mode == "1P":
+            bullet = pygame.Rect(
+                yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
+            yellow_bullets.append(bullet)
+            last_bot_bullet = time.time()
+            #BULLET_FIRE_SOUND.play()
 
         winner_text = ""
         if red_health <= 0:
@@ -166,7 +228,16 @@ def main():
             break
 
         keys_pressed = pygame.key.get_pressed()
-        yellow_handle_movement(keys_pressed, yellow)
+
+        if game_mode == "2P":
+            yellow_handle_movement(keys_pressed, yellow)
+        else:
+            bot_yellow_handle_movement(direction, yellow)
+            if time.time() - last_time >= bot_move_time:
+                last_time = time.time()
+                direction = random.choice(["left", "right", "up", "down"])
+                bot_move_time = random.uniform(0.2, 0.8)
+
         red_handle_movement(keys_pressed, red)
 
         handle_bullets(yellow_bullets, red_bullets, yellow, red)
