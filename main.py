@@ -49,12 +49,12 @@ def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_hea
 
     red_health_text = HEALTH_FONT.render(
         "Health: " + str(red_health), 1, WHITE)
-    if red_health < 3:
+    if red_health < 4:
         red_health_text = HEALTH_FONT.render(
         "Health: " + str(red_health), 1, RED)
     yellow_health_text = HEALTH_FONT.render(
         "Health: " + str(yellow_health), 1, WHITE)
-    if yellow_health < 3:
+    if yellow_health < 4:
         yellow_health_text = HEALTH_FONT.render(
         "Health: " + str(yellow_health), 1, RED)
     WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
@@ -113,7 +113,10 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
 
 
 def draw_winner(text):
-    draw_text = WINNER_FONT.render(text, 1, WHITE)
+    if text == "Yellow Wins!":
+        draw_text = WINNER_FONT.render(text, 1, YELLOW)
+    if text == "Red Wins!":
+        draw_text = WINNER_FONT.render(text, 1, RED)    
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
