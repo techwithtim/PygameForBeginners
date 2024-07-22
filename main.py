@@ -5,7 +5,7 @@ pygame.mixer.init()
 
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("First Game!")
+pygame.display.set_caption("Spaceship Game!")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -14,8 +14,8 @@ YELLOW = (255, 255, 0)
 
 BORDER = pygame.Rect(WIDTH//2 - 5, 0, 10, HEIGHT)
 
-#BULLET_HIT_SOUND = pygame.mixer.Sound('Assets/Grenade+1.mp3')
-#BULLET_FIRE_SOUND = pygame.mixer.Sound('Assets/Gun+Silencer.mp3')
+BULLET_HIT_SOUND = pygame.mixer.Sound('Assets/Grenade+1.mp3')
+BULLET_FIRE_SOUND = pygame.mixer.Sound('Assets/Gun+Silencer.mp3')
 
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
@@ -49,8 +49,14 @@ def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_hea
 
     red_health_text = HEALTH_FONT.render(
         "Health: " + str(red_health), 1, WHITE)
+    if red_health < 4:
+        red_health_text = HEALTH_FONT.render(
+        "Health: " + str(red_health), 1, RED)
     yellow_health_text = HEALTH_FONT.render(
         "Health: " + str(yellow_health), 1, WHITE)
+    if yellow_health < 4:
+        yellow_health_text = HEALTH_FONT.render(
+        "Health: " + str(yellow_health), 1, RED)
     WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
     WIN.blit(yellow_health_text, (10, 10))
 
@@ -107,7 +113,10 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
 
 
 def draw_winner(text):
-    draw_text = WINNER_FONT.render(text, 1, WHITE)
+    if text == "Yellow Wins!":
+        draw_text = WINNER_FONT.render(text, 1, YELLOW)
+    if text == "Red Wins!":
+        draw_text = WINNER_FONT.render(text, 1, RED)    
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
@@ -138,21 +147,21 @@ def main():
                     bullet = pygame.Rect(
                         yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
                     yellow_bullets.append(bullet)
-                    #BULLET_FIRE_SOUND.play()
+                    BULLET_FIRE_SOUND.play()
 
                 if event.key == pygame.K_RCTRL and len(red_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
                         red.x, red.y + red.height//2 - 2, 10, 5)
                     red_bullets.append(bullet)
-                    #BULLET_FIRE_SOUND.play()
+                    BULLET_FIRE_SOUND.play()
 
             if event.type == RED_HIT:
                 red_health -= 1
-                #BULLET_HIT_SOUND.play()
+                BULLET_HIT_SOUND.play()
 
             if event.type == YELLOW_HIT:
                 yellow_health -= 1
-                #BULLET_HIT_SOUND.play()
+                BULLET_HIT_SOUND.play()
 
         winner_text = ""
         if red_health <= 0:
