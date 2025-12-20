@@ -48,9 +48,29 @@ def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_hea
     pygame.draw.rect(WIN, BLACK, BORDER)
 
     red_health_text = HEALTH_FONT.render(
-        "Health: " + str(red_health), 1, WHITE)
+        "Health: " + str(red_health), 1, GREEN)
+    if red_health < 8 and red_health > 5:
+        red_health_text = HEALTH_FONT.render(
+            "Health: " + str(red_health), 1, YELLOW)
+    elif red_health < 6 and red_health > 3:
+        red_health_text = HEALTH_FONT.render(
+            "Health: " + str(red_health), 1, ORANGE)
+    elif red_health < 4:
+        red_health_text = HEALTH_FONT.render(
+            "Health: " + str(red_health), 1, RED)
+        
     yellow_health_text = HEALTH_FONT.render(
-        "Health: " + str(yellow_health), 1, WHITE)
+        "Health: " + str(yellow_health), 1, GREEN)
+    if yellow_health < 8 and yellow_health > 5:
+        yellow_health_text = HEALTH_FONT.render(
+            "Health: " + str(yellow_health), 1, YELLOW)
+    elif yellow_health < 6 and yellow_health > 3:
+        yellow_health_text = HEALTH_FONT.render(
+            "Health: " + str(yellow_health), 1, ORANGE)
+    elif yellow_health < 4:
+        yellow_health_text = HEALTH_FONT.render(
+            "Health: " + str(yellow_health), 1, RED)
+
     WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
     WIN.blit(yellow_health_text, (10, 10))
 
