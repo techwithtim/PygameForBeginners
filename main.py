@@ -49,29 +49,33 @@ def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_hea
     WIN.blit(SPACE, (0, 0))
     pygame.draw.rect(WIN, BLACK, BORDER)
 
+    # Red health color coding
+    if red_health == 10:
+        color = GREEN
+    elif red_health >= 7:
+        color = YELLOW
+    elif red_health >= 4:
+        color = ORANGE
+    elif red_health >= 1:
+        color = RED
+    else:
+        color = BLACK
     red_health_text = HEALTH_FONT.render(
-        "Health: " + str(red_health), 1, GREEN)
-    if red_health < 8 and red_health > 5:
-        red_health_text = HEALTH_FONT.render(
-            "Health: " + str(red_health), 1, YELLOW)
-    elif red_health < 6 and red_health > 3:
-        red_health_text = HEALTH_FONT.render(
-            "Health: " + str(red_health), 1, ORANGE)
-    elif red_health < 4:
-        red_health_text = HEALTH_FONT.render(
-            "Health: " + str(red_health), 1, RED)
-        
+        "Health: " + str(red_health), 1, color)
+    
+    # Yellow health color coding
+    if yellow_health == 10:
+        color = GREEN
+    elif yellow_health >= 7:
+        color = YELLOW
+    elif yellow_health >= 4:
+        color = ORANGE
+    elif yellow_health >= 1:
+        color = RED
+    else:
+        color = BLACK
     yellow_health_text = HEALTH_FONT.render(
-        "Health: " + str(yellow_health), 1, GREEN)
-    if yellow_health < 8 and yellow_health > 5:
-        yellow_health_text = HEALTH_FONT.render(
-            "Health: " + str(yellow_health), 1, YELLOW)
-    elif yellow_health < 6 and yellow_health > 3:
-        yellow_health_text = HEALTH_FONT.render(
-            "Health: " + str(yellow_health), 1, ORANGE)
-    elif yellow_health < 4:
-        yellow_health_text = HEALTH_FONT.render(
-            "Health: " + str(yellow_health), 1, RED)
+        "Health: " + str(yellow_health), 1, color)
 
     WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
     WIN.blit(yellow_health_text, (10, 10))
@@ -201,3 +205,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
